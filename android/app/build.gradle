@@ -1,5 +1,17 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
+
+
+project.ext.envConfigFiles = [
+    dev: ".env.development",
+    staging: ".env.staging",
+    product: ".env.production",
+    anothercustombuild: ".env",
+]
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 
 import com.android.build.OutputFile
 
@@ -100,7 +112,33 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        resValue "string", "app_name", "DEV"
     }
+
+    flavorDimensions "default"
+  productFlavors {
+      dev {
+          dimension "default"
+            resValue "string", "app_name", project.env.get("APP_NAME")
+            applicationIdSuffix ".dev"
+            versionCode 14
+            versionName "1.0.14"
+      }
+      staging {
+          dimension "default"
+             resValue "string", "app_name", project.env.get("APP_NAME")
+            applicationIdSuffix ".staging"
+            versionCode 14
+            versionName "1.0.14"
+      }
+      product {
+          dimension "default"
+             resValue "string", "app_name", project.env.get("APP_NAME")
+            applicationIdSuffix ".product"
+            versionCode 14
+            versionName "1.0.14"
+      }
+  }
 
     splits {
         abi {
@@ -155,6 +193,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation platform('com.google.firebase:firebase-bom:32.2.2')
+    implementation 'com.google.firebase:firebase-analytics'
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 
